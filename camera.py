@@ -14,78 +14,119 @@ from collections import deque
 import cv2
 import ctypes
 
-import os
+#import os
+
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# dlls_dir = os.path.join(current_dir, "dlls")
+
+# if not os.path.exists(dlls_dir):
+#     raise FileNotFoundError(f"DLL directory not found: {dlls_dir}")
+
+# # Python 3.8+ (Windows)
+# if hasattr(os, "add_dll_directory"):
+#     os.add_dll_directory(dlls_dir)
+
+# # Load Thorlabs DLLs
+# dlls_dir = f'{os.getcwd()}/dlls'
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# dlls_dir = os.path.join(current_dir, "dlls")
+# os.add_dll_directory(dlls_dir)
+
+# dlls = [
+#     f'{dlls_dir}/thorlabs_tsi_LUT.dll',
+#     f'{dlls_dir}/thorlabs_tsi_camera_sdk.dll',
+#     f'{dlls_dir}/thorlabs_tsi_color_processing.dll',
+#     f'{dlls_dir}/thorlabs_tsi_color_processing_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_demosaic.dll',
+#     f'{dlls_dir}/thorlabs_tsi_demosaic_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_loggerx.dll',
+#     f'{dlls_dir}/thorlabs_tsi_mono_to_color_processing.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx512.dll',
+#     f'{dlls_dir}/thorlabs_tsi_usb_hotplug_monitor.dll',
+#     f'{dlls_dir}/thorlabs_tsi_zelux_camera_device.dll'
+# ]
+
+# for dll in dlls:    
+#     try:
+#         ctypes.windll.LoadLibrary(dll)
+#     except Exception as e:
+#         print(f"Failed to load {dll}: {e}")
+
+# try:
+#     from thorlabs_tsi_sdk.tl_camera import TLCameraSDK, TLCamera, Frame, TLCameraError
+#     from thorlabs_tsi_sdk.tl_camera_enums import OPERATION_MODE, TRIGGER_POLARITY
+# except ImportError as e:
+#     logging.error(f"Failed to import Thorlabs SDK: {e}")
+#     raise
+# # Load Thorlabs DLLs (tcspc/dlls)
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# dlls_dir = os.path.join(current_dir, "dlls")
+
+# if not os.path.exists(dlls_dir):
+#     raise FileNotFoundError(f"DLL directory not found: {dlls_dir}")
+
+# # Required for Python 3.8+ on Windows
+# if hasattr(os, "add_dll_directory"):
+#     os.add_dll_directory(dlls_dir)
+
+# dlls = [
+#     f'{dlls_dir}/thorlabs_tsi_LUT.dll',
+#     f'{dlls_dir}/thorlabs_tsi_camera_sdk.dll',
+#     f'{dlls_dir}/thorlabs_tsi_color_processing.dll',
+#     f'{dlls_dir}/thorlabs_tsi_color_processing_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_demosaic.dll',
+#     f'{dlls_dir}/thorlabs_tsi_demosaic_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_loggerx.dll',
+#     f'{dlls_dir}/thorlabs_tsi_mono_to_color_processing.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx2.dll',
+#     f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx512.dll',
+#     f'{dlls_dir}/thorlabs_tsi_usb_hotplug_monitor.dll',
+#     f'{dlls_dir}/thorlabs_tsi_zelux_camera_device.dll'
+# ]
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-dlls_dir = os.path.join(current_dir, "dlls")
+dlls_dir = os.path.join(current_dir, "camera_dlls")
 
 if not os.path.exists(dlls_dir):
     raise FileNotFoundError(f"DLL directory not found: {dlls_dir}")
 
-# Python 3.8+ (Windows)
+# Method 1: Add DLL search path (Python 3.8+)
 if hasattr(os, "add_dll_directory"):
     os.add_dll_directory(dlls_dir)
+    logging.info(f"Added DLL search path: {dlls_dir}")
 
-# Load Thorlabs DLLs
-dlls_dir = f'{os.getcwd()}/dlls'
-current_dir = os.path.dirname(os.path.abspath(__file__))
-dlls_dir = os.path.join(current_dir, "dlls")
-os.add_dll_directory(dlls_dir)
-
+# Method 2: Explicitly preload all DLLs
 dlls = [
-    f'{dlls_dir}/thorlabs_tsi_LUT.dll',
-    f'{dlls_dir}/thorlabs_tsi_camera_sdk.dll',
-    f'{dlls_dir}/thorlabs_tsi_color_processing.dll',
-    f'{dlls_dir}/thorlabs_tsi_color_processing_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_demosaic.dll',
-    f'{dlls_dir}/thorlabs_tsi_demosaic_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_loggerx.dll',
-    f'{dlls_dir}/thorlabs_tsi_mono_to_color_processing.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx512.dll',
-    f'{dlls_dir}/thorlabs_tsi_usb_hotplug_monitor.dll',
-    f'{dlls_dir}/thorlabs_tsi_zelux_camera_device.dll'
+    "thorlabs_tsi_LUT.dll",
+    "thorlabs_tsi_camera_sdk.dll",
+    "thorlabs_tsi_color_processing.dll",
+    "thorlabs_tsi_color_processing_vector_avx2.dll",
+    "thorlabs_tsi_demosaic.dll",
+    "thorlabs_tsi_demosaic_vector_avx2.dll",
+    "thorlabs_tsi_loggerx.dll",
+    "thorlabs_tsi_mono_to_color_processing.dll",
+    "thorlabs_tsi_polarization_processor.dll",
+    "thorlabs_tsi_polarization_processor_vector_avx2.dll",
+    "thorlabs_tsi_polarization_processor_vector_avx512.dll",
+    "thorlabs_tsi_usb_hotplug_monitor.dll",
+    "thorlabs_tsi_zelux_camera_device.dll"
 ]
 
-for dll in dlls:    
+for dll in dlls:
+    dll_path = os.path.join(dlls_dir, dll)
+
+    if not os.path.exists(dll_path):
+        logging.warning(f"Missing DLL: {dll_path}")
+        continue
+
     try:
-        ctypes.windll.LoadLibrary(dll)
+        ctypes.WinDLL(dll_path)
+        logging.info(f"Loaded {dll}")
     except Exception as e:
-        print(f"Failed to load {dll}: {e}")
-
-try:
-    from thorlabs_tsi_sdk.tl_camera import TLCameraSDK, TLCamera, Frame, TLCameraError
-    from thorlabs_tsi_sdk.tl_camera_enums import OPERATION_MODE, TRIGGER_POLARITY
-except ImportError as e:
-    logging.error(f"Failed to import Thorlabs SDK: {e}")
-    raise
-# Load Thorlabs DLLs (tcspc/dlls)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-dlls_dir = os.path.join(current_dir, "dlls")
-
-if not os.path.exists(dlls_dir):
-    raise FileNotFoundError(f"DLL directory not found: {dlls_dir}")
-
-# Required for Python 3.8+ on Windows
-if hasattr(os, "add_dll_directory"):
-    os.add_dll_directory(dlls_dir)
-
-dlls = [
-    f'{dlls_dir}/thorlabs_tsi_LUT.dll',
-    f'{dlls_dir}/thorlabs_tsi_camera_sdk.dll',
-    f'{dlls_dir}/thorlabs_tsi_color_processing.dll',
-    f'{dlls_dir}/thorlabs_tsi_color_processing_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_demosaic.dll',
-    f'{dlls_dir}/thorlabs_tsi_demosaic_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_loggerx.dll',
-    f'{dlls_dir}/thorlabs_tsi_mono_to_color_processing.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx2.dll',
-    f'{dlls_dir}/thorlabs_tsi_polarization_processor_vector_avx512.dll',
-    f'{dlls_dir}/thorlabs_tsi_usb_hotplug_monitor.dll',
-    f'{dlls_dir}/thorlabs_tsi_zelux_camera_device.dll'
-]
+        logging.error(f"Failed to load {dll}: {e}")
 
 for dll in dlls:
     dll_path = os.path.join(dlls_dir, dll)
@@ -93,6 +134,7 @@ for dll in dlls:
         ctypes.WinDLL(dll_path)
     except OSError as e:
         raise RuntimeError(f"Failed to load DLL: {dll_path}") from e
+        
 THORLABS_SDK_AVAILABLE = True
 try:
     from thorlabs_tsi_sdk.tl_camera import TLCameraSDK, TLCamera, Frame, TLCameraError
