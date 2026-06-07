@@ -37,10 +37,6 @@ CKPT_INT = CKPT_INT_MAP[DATASET_TYPE]
 # N_TRAIN = 2700
 # N_TEST  = 300
 
-# # ESC-50 full dataset (all 2000 samples, ~1600 train / 400 test):
-# N_TRAIN = 1600
-# N_TEST  = 400
-
 # # # mushroom full dataset (all 8124 samples, ~6500 train / 1624 test):
 # N_TRAIN = 4124
 # N_TEST  = 1520
@@ -51,7 +47,6 @@ DATASET_SIZES = {
     "fsdd": 2700,     # FSDD: 6 speakers × 10 digits × 50 = 3000
     "abalone": 4177,  # Abalone: 4177 samples total
     "mushroom": 8124, # Mushroom: 8124 samples total
-    "deepfake": 12891  #140000,
 }
 TASK_TYPE = "regression" if DATASET_TYPE == "abalone" else "classification"
 # =============================================================================
@@ -78,12 +73,10 @@ PHASE_RANGE_INPUT = np.pi      # Input data encoded in [0, π]
 PHASE_RANGE_EMBEDDING = np.pi  # Embedding matrix in [0, π]
 
 # Ridge regression (Eq. 1)
-LAMBDA_REG = 0.001833 # 0.001 #0.007848 #0.000886  # Regularization parameter =2.0691e-04 for fsdd nosie embedding  λ = 0.000886
-
+LAMBDA_REG = 0.001833 # Regularization parameter 
 
 #zoom_factor
 Zoom_Factor = 18  # mnist
-DEEPFAKE_ZOOM_FACTOR = 1.0  # 1.0 = Pure 1:1 mapping. Change this to test optical scaling.
 
 
 # Hardware parameters (Appendix B)
@@ -123,7 +116,7 @@ if N_TRAIN / M_FEATURES < 0.5:
 # AUDIO EXPERIMENT CONFIG
 # =============================================================================
 
-#AUDIO_DATASET = "fsdd"   # "fsdd"  | "esc50"
+#AUDIO_DATASET = "fsdd"   # "fsdd"  | "esc50
 Fold_ID = 1  # For ESC-50, which fold to use as test set (1-5). Change for different experiments.
 
 # ── Signal parameters ────────────────────────────────────────────────────────
