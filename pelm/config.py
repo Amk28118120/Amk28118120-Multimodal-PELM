@@ -8,7 +8,7 @@ RANDOM_SEED = 42
 # =============================================================================
 # DATASET SELECTION
 # =============================================================================
-DATASET_TYPE = "fsdd" # "mnist" | "fsdd" | "abalone" | "mushroom" | "deepfake"
+DATASET_TYPE = "fsdd" # "mnist" | "fsdd" | "abalone" | "mushroom" 
 
 # Dictionary mapping datasets to their checkpoint intervals
 CKPT_INT_MAP = {
@@ -26,12 +26,6 @@ CKPT_INT = CKPT_INT_MAP[DATASET_TYPE]
 # =============================================================================
 # DATASET SIZE - EDIT HERE FOR TESTING vs FULL EXPERIMENT
 # =============================================================================
-# Quick test (5 min): for fsdd, use 2700 train / 300 test (90%/10% split of the 3000 samples)
-# N_TRAIN = 1600   # for esc 50, and to do for 5 folds
-# N_TEST = 400
-# 
-# N_TRAIN = 2000
-# N_TEST = 500
 # # abalone has 4177 total, 80/20 split:
 # N_TRAIN = 3480
 # N_TEST  = 696
@@ -39,17 +33,13 @@ CKPT_INT = CKPT_INT_MAP[DATASET_TYPE]
 # N_TRAIN = 60000
 # N_TEST = 10000
 
-# #FSDD full dataset (all 3000 samples, ~1800 train / 200 test):
-N_TRAIN = 2700
-N_TEST  = 300
+# # #FSDD full dataset (all 3000 samples, ~1800 train / 200 test):
+# N_TRAIN = 2700
+# N_TEST  = 300
 
 # # ESC-50 full dataset (all 2000 samples, ~1600 train / 400 test):
 # N_TRAIN = 1600
 # N_TEST  = 400
-
-# deepfake face , 70k fake, 70k real, 80/20 split for test and train 
-# N_TRAIN = 2000 #9424
-# N_TEST  = 500 #2356
 
 # # # mushroom full dataset (all 8124 samples, ~6500 train / 1624 test):
 # N_TRAIN = 4124
