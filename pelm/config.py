@@ -58,7 +58,7 @@ MNIST_INPUT_SIZE = 28  # MNIST dataset size is 28x28 px
 M_FEATURES = 512 #4096
 
 # Encoding method (Appendix A.2)
-# Options: "noise_embedding" or "fourier_embedding" or "DRF_embedding"
+# Options: "noise_embedding" or "fourier_embedding" 
 ENCODING_METHOD = "fourier_embedding"
 
 # Noise embedding parameters (Fig. 2b, 2c)
