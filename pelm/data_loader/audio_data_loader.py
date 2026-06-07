@@ -20,10 +20,6 @@ import cv2
 _FSDD_DIR = "./data/fsdd/recordings"
 
 
-# ============================================================
-# HANN TAPER
-# ============================================================
-
 def _apply_hann_taper(mel: np.ndarray, alpha: float = 0.1) -> np.ndarray:
     """
     Apply a 2D Hann-window taper to mel spectrogram edges.
@@ -51,21 +47,9 @@ def _apply_hann_taper(mel: np.ndarray, alpha: float = 0.1) -> np.ndarray:
 
 def _get_mel_spec(wav_path: str) -> np.ndarray:
     
-    # ==============================
-    # LOAD AUDIO
-    # ==============================
     y, sr = librosa.load(wav_path, sr=AUDIO_SAMPLE_RATE)
-
-
-    # ==============================
-    # NORMALIZE AUDIO
-    # ==============================
-    #y = y / (np.max(np.abs(y)) + 1e-8)
-    y = y / (np.max(np.abs(y)) + 1e-8)
-    #y = y * 2.0
-    #y = np.clip(y, -1.0, 1.0)
+    y = y / (np.max(np.abs(y)) + 1e-8) #normalise
     
-
     # ==============================
     # MEL SPECTROGRAM
     # ==============================
@@ -78,42 +62,18 @@ def _get_mel_spec(wav_path: str) -> np.ndarray:
         power=2.0
     )
 
-    # ==============================
-    # LOG SCALE (CRITICAL)
-    # ==============================
     log_mel = librosa.power_to_db(mel, ref=np.max)
-
-    # ==============================
-    # DYNAMIC RANGE CLIPPING
-    # ==============================
-    log_mel = np.clip(log_mel, -80, 0)
-
-    # ==============================
-    # NORMALIZATION → [0,1]
-    # ==============================
-    log_mel = (log_mel + 80) / 80
+    log_mel = np.clip(log_mel, -80, 0) #dynamic range clipping
     
-    # ==============================
-    # HANN TAPER (kills sinc boundary artifacts)
-    # ==============================
-    log_mel = _apply_hann_taper(log_mel, alpha=0.1)
+    log_mel = (log_mel + 80) / 80 #normalization [0-1]
 
-    # ==============================
-    # RESIZE TO MATCH PIPELINE
-    # ==============================
+    log_mel = _apply_hann_taper(log_mel, alpha=0.1)   # HANN TAPER (kills sinc boundary artifacts)
     log_mel = cv2.resize(log_mel, (128, 128), interpolation=cv2.INTER_CUBIC)
     
-    # ==============================
-    # FINAL CLEANUP
-    # ==============================
     log_mel = np.clip(log_mel, 0.0, 1.0)
 
     return log_mel.astype(np.float32)
 
-
-# ============================================================
-# DOWNLOADERS
-# ============================================================
 
 def _maybe_download_fsdd(data_dir: str = _FSDD_DIR):
     os.makedirs(data_dir, exist_ok=True)
