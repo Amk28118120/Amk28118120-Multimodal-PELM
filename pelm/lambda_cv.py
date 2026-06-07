@@ -41,7 +41,7 @@ BASE_OUT_DIR   = "results"
 FOLDS = 5
 LAMBDA_GRID = np.logspace(-5, 1, 30)
 
-EMBEDDINGS = ["drf", "noise", "fourier"]
+EMBEDDINGS = ["noise", "fourier"]
 
 TASK_MAP = {
     "mnist": "classification",
