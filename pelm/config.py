@@ -1,8 +1,4 @@
 import numpy as np
-
-# Photonic Extreme Learning Machine (Pierangeli et al., 2021)
-# https://doi.org/10.1364/PRJ.423531
-
 RANDOM_SEED = 42
 
 # =============================================================================
@@ -14,8 +10,8 @@ DATASET_TYPE = "fsdd" # "mnist" | "fsdd" | "abalone" | "mushroom"
 CKPT_INT_MAP = {
     "fsdd": 100,
     "mnist": 1000,
-    "abalone": 230,#pls check this
-    "mushroom": 4, #pls check this
+    "abalone": 230,
+    "mushroom": 4, 
 }
 if DATASET_TYPE not in CKPT_INT_MAP:
     raise ValueError(f"Unknown DATASET_TYPE: {DATASET_TYPE}")
@@ -26,12 +22,14 @@ CKPT_INT = CKPT_INT_MAP[DATASET_TYPE]
 # =============================================================================
 # DATASET SIZE - EDIT HERE FOR TESTING vs FULL EXPERIMENT
 # =============================================================================
+
 # # abalone has 4177 total, 80/20 split:
 # N_TRAIN = 3480
 # N_TEST  = 696
-# Full MNIST paper replication (4-5 hours):
-# N_TRAIN = 60000
-# N_TEST = 10000
+
+Full MNIST paper replication (4-5 hours):
+N_TRAIN = 60000
+N_TEST = 10000
 
 # # #FSDD full dataset (all 3000 samples, ~1800 train / 200 test):
 # N_TRAIN = 2700
@@ -49,37 +47,25 @@ DATASET_SIZES = {
     "mushroom": 8124, # Mushroom: 8124 samples total
 }
 TASK_TYPE = "regression" if DATASET_TYPE == "abalone" else "classification"
-# =============================================================================
 
-MNIST_INPUT_SIZE = 28  # MNIST dataset size is 28x28 px
+MNIST_INPUT_SIZE = 28  
 
-# Feature space (Fig. 4)
-# Paper tested various M from 256 to 4096
-M_FEATURES = 512 #4096
 
-# Encoding method (Appendix A.2)
-# Options: "noise_embedding" or "fourier_embedding" 
-ENCODING_METHOD = "fourier_embedding"
+M_FEATURES = 4096
 
-# Noise embedding parameters (Fig. 2b, 2c)
-#RHO = 0.5  # ghost variable.
+ENCODING_METHOD = "fourier_embedding" # Options: "noise_embedding" or "fourier_embedding" 
+
 NOISE_CORR_LENGTH = 5  # Noise correlation length in pixels
 
-# Fourier embedding parameters (Fig. 2e)
 FOURIER_FREQUENCIES = 2000  # Number of Fourier frequencies
 
-# Phase encoding ranges (Eq. 2)
 PHASE_RANGE_INPUT = np.pi      # Input data encoded in [0, π]
 PHASE_RANGE_EMBEDDING = np.pi  # Embedding matrix in [0, π]
 
-# Ridge regression (Eq. 1)
 LAMBDA_REG = 0.001833 # Regularization parameter 
 
-#zoom_factor
 Zoom_Factor = 18  # mnist
 
-
-# Hardware parameters (Appendix B)
 # SLM specifications
 SLM_WIDTH = 1920
 SLM_HEIGHT = 1200
@@ -92,7 +78,7 @@ CAM_HEIGHT = 1024
 CAM_BIT_DEPTH = 8
 
 CAM_BIN_SIZE = 10  # Size of spatial bins for feature extraction (pixels)
-CAM_EXPOSURE_US = 10000  # us; increase if signal too weak
+CAM_EXPOSURE_US = 10000  # us
 
 # Optical setup
 LASER_WAVELENGTH = 532e-9    # meters (green laser)
@@ -111,22 +97,16 @@ if N_TRAIN / M_FEATURES < 0.5:
     print(f"WARNING: N/M ratio is {N_TRAIN/M_FEATURES:.2f}, which is very low.")
     print(f"Paper recommends N/M ≈ 20. Consider increasing N_TRAIN or decreasing M_FEATURES.")
 
-
+Fold_ID = 1 
 # =============================================================================
 # AUDIO EXPERIMENT CONFIG
 # =============================================================================
-
-                                    
-Fold_ID = 1 
 # ── Signal parameters ────────────────────────────────────────────────────────
-
-    # FSDD parameters optimized for SOTA benchmarks and SLM projection
 AUDIO_SAMPLE_RATE = 8000
 #AUDIO_DURATION = 1.0
 AUDIO_N_MELS = 128     # 128 is the SOTA standard for speech/audio features
 AUDIO_N_FFT = 256      # 32ms window is still perfect for phonemes
 AUDIO_HOP_LENGTH = 64  # Halved to double the time resolution
-
 AUDIO_FILL_H = 0.5  # fraction of SLM_HEIGHT used by the mel spectrogram
 AUDIO_FILL_W = 0.5  # fraction of SLM_WIDTH  used by the mel spectrogram
 
