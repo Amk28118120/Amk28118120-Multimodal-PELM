@@ -21,7 +21,7 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 # ══════════════════════════════════════════════════════════════════════════════
 #  ██████  TOGGLE EMBEDDING MODE HERE  ██████
 # ══════════════════════════════════════════════════════════════════════════════
-# Options: "fourier", "noise", "drf"
+# Options: "fourier", "noise"
 TARGET_EMBEDDING = "noise"
 
 # Number of samples (50 samples = 1225 pairs, satisfying Check A's ~1000 pair requirement)
