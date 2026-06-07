@@ -23,7 +23,7 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 # Options: "mnist", "fsdd", "abalone", "mushroom"
 TARGET_DATASET = "mushroom"
-EMBEDDINGS     = ["drf", "noise", "fourier"]
+EMBEDDINGS     = ["noise", "fourier"]
 
 # =============================================================================
 # 2. EXPERIMENT CONFIGURATION
