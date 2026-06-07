@@ -56,17 +56,6 @@ def _get_mel_spec(wav_path: str) -> np.ndarray:
     # ==============================
     y, sr = librosa.load(wav_path, sr=AUDIO_SAMPLE_RATE)
 
-    #target_len = int(AUDIO_SAMPLE_RATE * AUDIO_DURATION)
-
-    # # ==============================
-    # # FIX LENGTH (VERY IMPORTANT)
-    # # ==============================
-    # if len(y) < target_len:
-    #     y = np.pad(y, (0, target_len - len(y)))
-    # else:
-    #     start = (len(y) - target_len) // 2
-
-    #     y = y[start:start + target_len]
 
     # ==============================
     # NORMALIZE AUDIO
