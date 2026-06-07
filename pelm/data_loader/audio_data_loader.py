@@ -103,11 +103,6 @@ def _get_mel_spec(wav_path: str) -> np.ndarray:
     # ==============================
     log_mel = cv2.resize(log_mel, (128, 128), interpolation=cv2.INTER_CUBIC)
     
-    #log_mel = cv2.resize(log_mel, (128, 128), interpolation=cv2.INTER_AREA)
-
-    
-    #log_mel = cv2.resize(log_mel, (128, 128), interpolation=cv2.INTER_LANCZOS4)
-
     # ==============================
     # FINAL CLEANUP
     # ==============================
