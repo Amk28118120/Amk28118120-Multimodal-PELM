@@ -22,7 +22,6 @@ from optics_driver import OpticalSystem
 from config import DATASET_TYPE
 from pelm_core import PELM_Algorithm
 from data_loader.Mushroom_data_loader import get_mushroom 
-from data_loader.deepfake_loader import get_deepfake
 
 CHECKPOINT_FILE = f"{DATASET_TYPE}_train_fold{Fold_ID}.npz"
 TEST_CHECKPOINT_FILE = f"{DATASET_TYPE}_test_fold{Fold_ID}.npz"
@@ -135,10 +134,6 @@ def main():
         (X_train, y_train), (X_test, y_test) = get_fsdd()
         n_classes = 10
         
-    elif DATASET_TYPE == "deepfake":
-        (X_train, y_train), (X_test, y_test) = get_deepfake()
-        n_classes = 2  # Binary classification: Real vs Fake
-    
     elif DATASET_TYPE == "mushroom":
         (X_train, y_train), (X_test, y_test) = get_mushroom()
         n_classes = 2  # e (edible) or p (poisonous)
@@ -274,17 +269,6 @@ def main():
             _last_feat_std  = float(np.std(features))
             _last_sat       = 100.0 * float(np.sum(camera_frame >= 254)) / camera_frame.size
 
-            # if SAVE_EXAMPLE_IMAGES and i < NUM_EXAMPLES_TO_SAVE:
-
-            #     model.save_phase_mask_example(X_train[i], idx=i)
-            #     model.visualize_feature_extraction(camera_frame, H_train[i], idx=i)
-            #     img = camera_frame
-            #     if img.dtype != 'uint8':
-            #         img = img.astype(float)
-            #         img = (img - img.min()) / (img.max() - img.min() + 1e-8)
-            #         img = (img * 255).astype('uint8')
-
-            #     cv2.imwrite(f"camera_frames/camera_frame_{i:05d}.png", img)
             if SAVE_EXAMPLE_IMAGES and i < NUM_EXAMPLES_TO_SAVE:
                 model.save_phase_mask_example(X_train[i], idx=i)
                 model.visualize_feature_extraction(camera_frame, H_train[i], idx=i)
@@ -579,12 +563,6 @@ def main():
             print("[Results] sklearn not available — skipping confusion matrix")
         except Exception as e:
             print(f"[Results] Confusion matrix error: {e}")
-
-        # if os.path.exists(CHECKPOINT_FILE):
-        #     os.remove(CHECKPOINT_FILE)
-
-        # if os.path.exists(TEST_CHECKPOINT_FILE):
-        #     os.remove(TEST_CHECKPOINT_FILE)
 
     try:
         optics.cleanup()
