@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 # ══════════════════════════════════════════════════════════════════════════════
 # Options: "mnist", "fsdd", "abalone", "mushroom"
 TARGET_DATASET = "mushroom"
-EMBEDDINGS = ["drf", "noise", "fourier"]
+EMBEDDINGS = [ "noise", "fourier"]
 #EMBEDDINGS = ["noise", "fourier"]
 # ═════════════════════════════════════════════════════════════════════════════
 #  CONFIG & EMBEDDING DATA
@@ -46,14 +46,6 @@ def get_npz_paths(dataset, base_dir="/Users/anushkakumari/tcspc/pelm/npz_files")
 # Known accuracies organized by embedding type
 # Known accuracies organized by embedding type
 KNOWN_ACCURACY_ALL = {
-    "drf": {
-        "mnist": {0: 98.98, 1: 99.30, 2: 93.12, 3: 96.04, 4: 95.32,
-                  5: 95.18, 6: 96.66, 7: 93.77, 8: 93.94, 9: 93.86},
-        "fsdd":  {0: 96.67, 1: 93.33, 2: 100.0, 3: 100.0, 4: 100.0, 
-                  5: 100.0, 6: 93.33, 7: 100.0, 8: 86.67, 9: 96.67},
-        "abalone": None,
-        "mushroom": {0: 100.0, 1: 100.0},
-    },
     "noise": {
         "mnist": {0: 97.10, 1: 99.21, 2: 95.63, 3: 96.14, 4: 96.64,
                   5: 96.75, 6: 96.56, 7: 93.78, 8: 94.97, 9: 94.84},
