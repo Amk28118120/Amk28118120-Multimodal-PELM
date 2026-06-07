@@ -1,13 +1,3 @@
-"""
-MNIST classification using a hardware-based photonic extreme learning machine.
-Implementation follows Pierangeli et al. (2021).
-
-Additions for 60,000-sample runs:
-  1. Checkpoint every 1000 samples — resume on crash, no data lost
-  2. std threshold corrected: 1.0 → 0.01
-  3. CAM_EXPOSURE_US logged in results
-"""
-
 import numpy as np
 import time
 import os
@@ -123,7 +113,7 @@ def main():
     print(f"\n[Dataset] Using: {DATASET_TYPE.upper()}")
     
     # ========================================================
-    # LOAD DATA (dataset-aware)
+    # LOAD DATA 
     # ========================================================
     
     if DATASET_TYPE == "mnist":
