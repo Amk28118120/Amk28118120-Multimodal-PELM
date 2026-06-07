@@ -18,9 +18,6 @@ from scipy.stats import pearsonr, spearmanr
 os.environ["OMP_NUM_THREADS"]      = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  ██████  TOGGLE EMBEDDING MODE HERE  ██████
-# ══════════════════════════════════════════════════════════════════════════════
 # Options: "fourier", "noise"
 TARGET_EMBEDDING = "noise"
 
@@ -41,10 +38,6 @@ COLORS  = {"mnist": "dodgerblue", "fsdd": "crimson", "abalone": "mediumseagreen"
 MARKERS = {"mnist": "o", "fsdd": "s", "abalone": "^"}
 TITLES  = {"mnist": "MNIST", "fsdd": "FSDD (Audio)", "abalone": "Abalone"}
 
-# ─────────────────────────────────────────────────────────────────
-#  HELPERS
-# ─────────────────────────────────────────────────────────────────
-
 def load_raw_loader(spec):
     if spec is None: return None
     mod_name, fn_name = spec.rsplit(".", 1)
@@ -59,7 +52,6 @@ def load_raw_loader(spec):
 def preprocess(H, is_raw):
     """
     Applies per-sample DC removal and L2 hyperspherical normalization 
-    to exactly match Equation 9 of the PELM manuscript.
     """
     H = H.copy()
     if is_raw:
@@ -76,7 +68,6 @@ def load_npz(dataset, emb):
     data = np.load(path, allow_pickle=False)
     H = data["H_train"].astype(np.float64)
     
-    # Process features to match manuscript Eq. 9
     return preprocess(H, is_raw=True)
 
 def z_score(v): 
@@ -177,7 +168,7 @@ def main():
     plt.savefig(fname, dpi=300, bbox_inches="tight")
     plt.close()
     
-    print(f"\n  ✅ Success! Saved to {fname}")
+    print(f"\n Success! Saved to {fname}")
     print("="*70 + "\n")
 
 if __name__ == "__main__":
