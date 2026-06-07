@@ -1,8 +1,5 @@
 """
 Hardware interface for PELM optical system.
-Built for 60,000-sample runs without stalling.
-
-Root fixes:
   1. Camera in daemon (streaming) mode — armed ONCE at init
        camera.py's capture_frame() already skips arm/disarm when streaming.
        This is the correct API usage, no raw SDK hacking needed.
@@ -126,20 +123,7 @@ class OpticalSystem:
         print(f"[SLM] Data field allocated: {SLM_WIDTH}x{SLM_HEIGHT} float32 (reused)")
 
     def _init_camera(self):
-        """
-        Connect camera and start daemon (streaming) mode.
-
-        Why daemon mode:
-            camera.py's capture_frame() checks self.status.is_streaming.
-            When True, it returns self._current_frame.copy() directly from
-            the daemon thread's buffer — NO arm/disarm per call.
-            This is the correct pattern for long acquisitions.
-
-        Without daemon mode:
-            capture_frame() does arm(frames_to_buffer=10) → trigger →
-            get_frame → disarm() every call. After ~1600 cycles the
-            Thorlabs USB driver exhausts its transfer queue → timeout.
-        """
+        
         print("\n[Camera] Connecting to Thorlabs camera...")
         self.camera = self.ThorlabsCamera()
 
@@ -188,12 +172,8 @@ class OpticalSystem:
 
         Args:
             phase_mask : float32 [0, 2pi], shape (SLM_HEIGHT, SLM_WIDTH)
-
         Returns:
             uint8 grayscale array, shape (CAM_HEIGHT, CAM_WIDTH)
-
-        Raises:
-            RuntimeError on 5 consecutive failures
         """
         if self.slm is None or self.camera is None:
             raise RuntimeError("Hardware not initialized")
@@ -323,34 +303,7 @@ class OpticalSystem:
         self.frames_captured += 1
         return frame
 
-    # ================================================================
-    # BIT DEPTH CONVERSION
-    # ================================================================
 
-    # def _to_uint8(self, frame):
-    #     """
-    #     Convert camera frame to uint8 grayscale.
-
-    #     Critical fix: original code used (frame // 256) which floors
-    #     any pixel value < 256 to 0 on a 16-bit/12-bit camera.
-    #     1st order diffraction is dim — pixel values often 100-500 ADU
-    #     on a 12-bit sensor (0-4095 range). floor(200 / 256) = 0.
-    #     This made all 1st-order features zero → std ≈ 0.
-
-    #     Fix: scale by actual sensor range (12-bit = 4095, 16-bit = 65535)
-    #     to preserve weak signal.
-    #     """
-    #     if frame.dtype == np.uint16:
-    #         # CS165CU outputs 16-bit container but is a 16-bit sensor
-    #         # Scale full 16-bit range to 0-255
-    #         frame = (frame.astype(np.float32) / 1023.0 * 255.0).astype(np.uint8)
-    #     elif frame.dtype != np.uint8:
-    #         frame = np.clip(frame, 0, 255).astype(np.uint8)
-
-    #     if frame.ndim == 3:
-    #         frame = np.mean(frame, axis=2).astype(np.uint8)
-
-    #     return frame
     def _to_uint8(self, frame):
 
         if frame.dtype == np.uint16:
@@ -370,11 +323,6 @@ class OpticalSystem:
     # ================================================================
 
     def run_optical_test(self):
-        """
-        Capture a test frame with blank phase mask.
-        Reports mean, std, saturation — use to tune CAM_EXPOSURE_US.
-        Target saturation: 1-10%.
-        """
         print("\n[Optics] Running optical system test...")
 
         test_phase = np.zeros((SLM_HEIGHT, SLM_WIDTH), dtype=np.float32)
@@ -420,15 +368,6 @@ class OpticalSystem:
         return np.pad(frame, ((0, pad_h), (0, pad_w)), mode='constant')
 
     def cleanup(self):
-        """
-        Release all hardware in safe order:
-            1. stop_daemon()    — stops background thread, disarms camera
-            2. disconnect()     — disposes camera SDK object
-            3. HEDS.SDK.Close() — closes SLM SDK
-
-        This order prevents Thorlabs SDK error 1004:
-        "Cameras must be closed before closing the SDK"
-        """
         print("\n[Optics] Cleaning up hardware...")
 
         if self.camera is not None:
