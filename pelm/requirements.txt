@@ -1,0 +1,17 @@
+# PELM (Photonic Extreme Learning Machine) - Requirements
+
+# Core numerical computing
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Machine learning & visualization
+scikit-learn>=1.0.0
+matplotlib>=3.4.0
+
+# Dataset (MNIST)
+torch>=1.10.0
+torchvision>=0.11.0
+librosa>=0.8.0
+# Note: Hardware SDKs must be installed separately:
+# - Holoeye SLM SDK (Windows-only): Place in slm_sdk/HEDS/ folder
+# - Thorlabs TSI SDK (Windows-only): Place camera.py in tcspc/ folder

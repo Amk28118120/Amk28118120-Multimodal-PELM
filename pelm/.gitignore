@@ -1,0 +1,18 @@
+data/
+# Hardware SDKs (vendor-provided, not versioned)
+#slm_sdk/
+#tcspc/
+
+# Python
+__pycache__/
+*.pyc
+
+# Data
+data/
+
+# OS
+.DS_Store
+kernel_analysis/
+npz_files/
+analysis_results/
+results/

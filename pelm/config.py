@@ -1,0 +1,153 @@
+import numpy as np
+
+# Photonic Extreme Learning Machine (Pierangeli et al., 2021)
+# https://doi.org/10.1364/PRJ.423531
+
+RANDOM_SEED = 42
+
+# =============================================================================
+# DATASET SELECTION
+# =============================================================================
+DATASET_TYPE = "fsdd" # "mnist" | "fsdd" | "abalone" | "mushroom" | "deepfake"
+
+# Dictionary mapping datasets to their checkpoint intervals
+CKPT_INT_MAP = {
+    "fsdd": 100,
+    "mnist": 1000,
+    "abalone": 230,#pls check this
+    "mushroom": 4, #pls check this
+}
+if DATASET_TYPE not in CKPT_INT_MAP:
+    raise ValueError(f"Unknown DATASET_TYPE: {DATASET_TYPE}")
+
+CKPT_INT = CKPT_INT_MAP[DATASET_TYPE]
+
+
+# =============================================================================
+# DATASET SIZE - EDIT HERE FOR TESTING vs FULL EXPERIMENT
+# =============================================================================
+# Quick test (5 min): for fsdd, use 2700 train / 300 test (90%/10% split of the 3000 samples)
+# N_TRAIN = 1600   # for esc 50, and to do for 5 folds
+# N_TEST = 400
+# 
+# N_TRAIN = 2000
+# N_TEST = 500
+# # abalone has 4177 total, 80/20 split:
+# N_TRAIN = 3480
+# N_TEST  = 696
+# Full MNIST paper replication (4-5 hours):
+# N_TRAIN = 60000
+# N_TEST = 10000
+
+# #FSDD full dataset (all 3000 samples, ~1800 train / 200 test):
+N_TRAIN = 2700
+N_TEST  = 300
+
+# # ESC-50 full dataset (all 2000 samples, ~1600 train / 400 test):
+# N_TRAIN = 1600
+# N_TEST  = 400
+
+# deepfake face , 70k fake, 70k real, 80/20 split for test and train 
+# N_TRAIN = 2000 #9424
+# N_TEST  = 500 #2356
+
+# # # mushroom full dataset (all 8124 samples, ~6500 train / 1624 test):
+# N_TRAIN = 4124
+# N_TEST  = 1520
+
+# Dataset sizes (for validation)
+DATASET_SIZES = {
+    "mnist": 70000,   # MNIST: 60k train + 10k test available
+    "fsdd": 2700,     # FSDD: 6 speakers × 10 digits × 50 = 3000
+    "abalone": 4177,  # Abalone: 4177 samples total
+    "mushroom": 8124, # Mushroom: 8124 samples total
+    "deepfake": 12891  #140000,
+}
+TASK_TYPE = "regression" if DATASET_TYPE == "abalone" else "classification"
+# =============================================================================
+
+MNIST_INPUT_SIZE = 28  # MNIST dataset size is 28x28 px
+
+# Feature space (Fig. 4)
+# Paper tested various M from 256 to 4096
+M_FEATURES = 512 #4096
+
+# Encoding method (Appendix A.2)
+# Options: "noise_embedding" or "fourier_embedding" or "DRF_embedding"
+ENCODING_METHOD = "fourier_embedding"
+
+# Noise embedding parameters (Fig. 2b, 2c)
+#RHO = 0.5  # ghost variable.
+NOISE_CORR_LENGTH = 5  # Noise correlation length in pixels
+
+# Fourier embedding parameters (Fig. 2e)
+FOURIER_FREQUENCIES = 2000  # Number of Fourier frequencies
+
+# Phase encoding ranges (Eq. 2)
+PHASE_RANGE_INPUT = np.pi      # Input data encoded in [0, π]
+PHASE_RANGE_EMBEDDING = np.pi  # Embedding matrix in [0, π]
+
+# Ridge regression (Eq. 1)
+LAMBDA_REG = 0.001833 # 0.001 #0.007848 #0.000886  # Regularization parameter =2.0691e-04 for fsdd nosie embedding  λ = 0.000886
+
+
+#zoom_factor
+Zoom_Factor = 18  # mnist
+DEEPFAKE_ZOOM_FACTOR = 1.0  # 1.0 = Pure 1:1 mapping. Change this to test optical scaling.
+
+
+# Hardware parameters (Appendix B)
+# SLM specifications
+SLM_WIDTH = 1920
+SLM_HEIGHT = 1200
+SLM_PIXEL_PITCH = 8e-6  # meters
+SLM_PHASE_LEVELS = 210
+
+# Camera specifications
+CAM_WIDTH = 1280
+CAM_HEIGHT = 1024
+CAM_BIT_DEPTH = 8
+
+CAM_BIN_SIZE = 10  # Size of spatial bins for feature extraction (pixels)
+CAM_EXPOSURE_US = 10000  # us; increase if signal too weak
+
+# Optical setup
+LASER_WAVELENGTH = 532e-9    # meters (green laser)
+LENS_FOCAL_LENGTH = 150e-3   # meters (150mm focal length)
+
+# Timing parameters
+LC_SETTLING_TIME = 0.10       # seconds - liquid crystal settling time
+NUM_FRAMES_TO_AVERAGE = 3     # Number of frames to average (reduces vibration noise)
+
+# Visualization settings
+SAVE_EXAMPLE_IMAGES = True    # Save embedding, encoding, feature extraction examples
+NUM_EXAMPLES_TO_SAVE = 3     # Number of example visualizations to save
+
+# Configuration validation
+if N_TRAIN / M_FEATURES < 0.5:
+    print(f"WARNING: N/M ratio is {N_TRAIN/M_FEATURES:.2f}, which is very low.")
+    print(f"Paper recommends N/M ≈ 20. Consider increasing N_TRAIN or decreasing M_FEATURES.")
+
+
+# =============================================================================
+# AUDIO EXPERIMENT CONFIG
+# =============================================================================
+
+#AUDIO_DATASET = "fsdd"   # "fsdd"  | "esc50"
+Fold_ID = 1  # For ESC-50, which fold to use as test set (1-5). Change for different experiments.
+
+# ── Signal parameters ────────────────────────────────────────────────────────
+
+    # FSDD parameters optimized for SOTA benchmarks and SLM projection
+AUDIO_SAMPLE_RATE = 8000
+#AUDIO_DURATION = 1.0
+AUDIO_N_MELS = 128     # 128 is the SOTA standard for speech/audio features
+AUDIO_N_FFT = 256      # 32ms window is still perfect for phonemes
+AUDIO_HOP_LENGTH = 64  # Halved to double the time resolution
+
+AUDIO_FILL_H = 0.5  # fraction of SLM_HEIGHT used by the mel spectrogram
+AUDIO_FILL_W = 0.5  # fraction of SLM_WIDTH  used by the mel spectrogram
+
+
+
+
