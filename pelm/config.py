@@ -116,9 +116,8 @@ if N_TRAIN / M_FEATURES < 0.5:
 # AUDIO EXPERIMENT CONFIG
 # =============================================================================
 
-#AUDIO_DATASET = "fsdd"   # "fsdd"  | "esc50
-Fold_ID = 1  # For ESC-50, which fold to use as test set (1-5). Change for different experiments.
-
+                                    
+Fold_ID = 1 
 # ── Signal parameters ────────────────────────────────────────────────────────
 
     # FSDD parameters optimized for SOTA benchmarks and SLM projection
