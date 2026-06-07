@@ -1,20 +1,8 @@
 """
-lambda_cv.py — Parallel Cross-validated lambda selection for PELM
-==========================================================================
-Workflow:
-  1. Set TARGET_DATASET at the top.
-  2. Script automatically spawns parallel processes for drf, noise, fourier.
-  3. K-fold CV over a lambda grid → pick best lambda per embedding.
-  4. Retrain on ALL training data with best lambda.
-  5. Evaluate ONCE on test.npz and generate Confusion Matrix (for classification).
-  6. Saves cleanly to results/<dataset>/<embedding>/
+5 fold corss validation to fnd optimun lambda 
 """
 
 import os
-
-# ──────────────────────────────────────────────────────────────────────────────
-# CRITICAL FIX: Stop Numpy from CPU thrashing during multiprocessing
-# ──────────────────────────────────────────────────────────────────────────────
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -24,7 +12,7 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 import time
 import numpy as np
 import matplotlib
-matplotlib.use('Agg') # Safe for multiprocessing
+matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from sklearn.model_selection import StratifiedKFold, KFold
@@ -32,7 +20,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import concurrent.futures
 
 # ──────────────────────────────────────────────────────────────────────────────
-#  MASTER TOGGLE
+#  TOGGLE
 # ──────────────────────────────────────────────────────────────────────────────
 TARGET_DATASET = "abalone"  # Options: "mnist", "fsdd", "mushroom", "abalone"
 NPZ_DIR        = "npz_files"
@@ -70,7 +58,6 @@ def load_and_preprocess(path: str):
     else:
         raise KeyError(f"Cannot find H_train/H_test in {path}")
 
-    # CRITICAL FIX: Center and normalize BOTH Train and Test consistently.
     H -= H.mean(axis=1, keepdims=True)
     H /= (np.linalg.norm(H, axis=1, keepdims=True) + 1e-12)
     
@@ -130,7 +117,6 @@ def cross_validate(H, y, task, n_classes, folds, lambda_grid, emb_name, dataset_
 
         Y_tr = one_hot(y_tr, n_classes) if task == "classification" else y_tr.reshape(-1, 1)
 
-        # MASSIVE SPEEDUP: Precompute A and B once per fold
         A = H_tr.T @ H_tr
         B = H_tr.T @ Y_tr
         I = np.eye(H_tr.shape[1])
@@ -279,7 +265,7 @@ def process_embedding(dataset, task, emb):
             f.write(f"Test RMSE    : {-test_score:.4f}\n")
             f.write(f"Test NRMSE   : {-test_score / y_range:.4f}\n")
 
-    res_str = f"  ✅ {emb.upper():<12} | Best λ: {best_lam:.4e} | "
+    res_str = f"  {emb.upper():<12} | Best λ: {best_lam:.4e} | "
     if task == "classification":
         res_str += f"Test Acc: {test_score*100:.2f}%"
     else:
