@@ -119,38 +119,6 @@ class PELM_Algorithm:
             # Map wrapped phase directly to [0, π]
             W = (W + np.pi) / (2 * np.pi) * PHASE_RANGE_EMBEDDING
             
-        elif ENCODING_METHOD == "DRF_embedding":
-        
-            W_real = np.zeros((h, w), dtype=np.float32)
-            W_imag = np.zeros((h, w), dtype=np.float32)
-            
-            x = np.linspace(0, 1, w, dtype=np.float32)
-            y = np.linspace(0, 1, h, dtype=np.float32)
-            X, Y = np.meshgrid(x, y)
-            
-            for n in range(1, FOURIER_FREQUENCIES + 1):
-                # Random phase
-                phi = np.random.uniform(0, 2 * np.pi)
-                
-                # Random propagation direction
-                theta = np.random.uniform(0, 2 * np.pi)
-                kx = np.cos(theta)
-                ky = np.sin(theta)
-                
-                # Spatial frequency
-                omega = 2.0 * np.pi * n
-                
-                # Random directional Fourier wave
-                phase = omega * (kx * X + ky * Y)
-                
-                W_real += np.cos(phase + phi)
-                W_imag += np.sin(phase + phi)
-            
-            # Wrapped phase in [-π, π]
-            W = np.arctan2(W_imag, W_real).astype(np.float32)
-            
-            # Map wrapped phase directly to [0, π]
-            W = (W + np.pi) / (2 * np.pi) * PHASE_RANGE_EMBEDDING
         elif ENCODING_METHOD == "no_embedding":
 
             self.W_1d = None
