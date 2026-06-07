@@ -290,18 +290,6 @@ class PELM_Algorithm:
         if is_mnist:
             target_h, target_w = self.zoom_h, self.zoom_w
             
-        # elif DATASET_TYPE == "deepfake":
-        #     # DEEPFAKE: Configurable optical scaling
-        #     if DEEPFAKE_ZOOM_FACTOR == 1.0:
-        #         # Bypass digital scaling entirely for mathematically pure 1:1 mapping
-        #         img = x_norm.astype(np.float32)
-        #     else:
-        #         # Apply nearest-neighbor zoom if factor is changed in config
-        #         img = scipy.ndimage.zoom(
-        #             x_norm, 
-        #             (DEEPFAKE_ZOOM_FACTOR, DEEPFAKE_ZOOM_FACTOR), 
-        #             order=0
-        #         ).astype(np.float32)
         else:
             target_max_h = int(SLM_HEIGHT * AUDIO_FILL_H)
             target_max_w = int(SLM_WIDTH * AUDIO_FILL_W)
